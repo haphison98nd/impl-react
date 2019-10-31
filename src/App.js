@@ -8,17 +8,17 @@ class App extends Component {
         super(props);
 
         this.state = {
-            error: null,
+            error: '',
             isLoaded: false,
             response: [],
             value: '',
             isShowButton: false,
             currentPage : 1,
         }
+        
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleCheck = this.handleCheck.bind(this);
-
     }
 
 
@@ -29,6 +29,9 @@ class App extends Component {
     handleChange(event){
         this.setState({
             value : event.target.value,
+            currentPage : 1,
+            isShowButton: false,
+            response: [],
         });
     }
 
@@ -38,8 +41,8 @@ class App extends Component {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result);
-                    console.log(this.state.response);
+                    // console.log(result);
+                    // console.log(this.state.response);
                     this.setState({
                         isLoaded: true,
                         response: this.state.response.concat(result),
@@ -72,67 +75,68 @@ class App extends Component {
                 });
             },
             (error) => {
-                // this.setState({
-                //     isLoaded: true,
-                //     error
-                // });
+                this.setState({
+                    isLoaded: true,
+                    error
+                });
             }
         )
-        
     }
 
     render() {
-        let response = this.state.response;
-        let elmButton = null;
+        // let response = this.state.response;
+        let { error, isLoaded, response } = this.state;
+        let elmButton, elmError, emlLoading, elmCount, elmList = null;
+
+        elmCount = <div> {this.state.response.length} </div>;
+        
         if (this.state.isShowButton == true) {
-            elmButton = <button onClick={this.handleSubmit} type="button" className="btn btn-block btn-success"> Show More </button>;
+            elmButton = <button onClick={this.handleSubmit} type="button" className="btn btn-success showmore"> Show More </button>;
         }
-        console.log(this.state.isShowButton);
+        // console.log(this.state.isShowButton);
+        if (error) {
+            // elmError =  <div> Error: ko tim thay user </div>;
+            // elmList = '';
+            console.log(error.message);
+        }
+        else if (!isLoaded) {
+            elmButton = '';
+            elmList = '';
+        }
+        else{
+            elmList = (
+                <ul className="list-repo">
+                {response.map(item => (
+                    <li key={item.name}>
+                        {item.full_name}
+                    </li>
+                ))}
+
+                </ul> 
+            )
+        }
         return (
-            <div className="container">
+            <div className="container wrapper">
                 <div className="form-inpt">
                     <form>
                         <label>
                             Name:
-                            <input type="text" value={this.state.value} onChange={this.handleChange} />
+                            <input className="username" type="text" value={this.state.value} onChange={this.handleChange} />
                         </label>
-                        <input type="button" onClick={this.handleSubmit} value="Submit" />
+                        <input className="btn-submit btn-success" type="button" onClick={this.handleSubmit} value="Submit" />
                     </form>
 
                 </div>
+                {elmError}
                 <div>
-                    <ul className="list-repo">
-                    {response.map(item => (
-                        <li key={item.name}>
-                            {item.full_name}
-                        </li>
-                    ))}
-
-                    </ul>
+                    {elmList}
+                    
                 </div>
+                {emlLoading}
                 {elmButton}
-                {/* <button onClick={this.handleCheck} ></button> */}
-            </div>
-        );
 
-        // const { error, isLoaded, items } = this.state;
-        // if(error){
-        //     const { error, isLoaded, items } = this.state;
-        // }
-        // else if (!isLoaded) {
-        //     return <div>Loading...</div>;
-        // }
-        // else{
-        //     return (
-        //         <ul>
-        //             {items.map(item => (
-        //                 <li key={item.name}>
-        //                     {item.full_name}
-        //                 </li>
-        //             ))}
-        //         </ul>
-        //     );
-        // }
+            </div>
+        ); 
     }
 }
 export default App;
