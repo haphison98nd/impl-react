@@ -5,24 +5,16 @@ class ButtonShowMore extends Component {
         super(props);
 
         this.state = {
-
+            
         }
+        
     }
-
     render(){
-        let isShowButton = this.props.isShowButton;
-        if (isShowButton){
-            return (
-                <button>
-                    Show More
-                </button>
-            );
-        }
-        else{
-            return 0;
-        }
-    	
-
+        let response = this.props.response;
+        return(
+            <button onClick={this.props.onClickShowMore} type="button" className="btn btn-success showmore"> Show More </button>
+        );
     }
-} 
+}
+
 export default ButtonShowMore;
